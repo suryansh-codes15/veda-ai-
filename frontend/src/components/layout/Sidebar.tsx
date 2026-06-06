@@ -15,7 +15,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { assignments, settings } = useAppStore();
+  const { assignments, settings, sidebarOpen, setSidebarOpen } = useAppStore();
 
   const isActive = (href: string) => {
     if (href === '/assignments') return pathname.startsWith('/assignments') || pathname === '/';
@@ -23,7 +23,22 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-[304px] bg-white rounded-2xl shadow-realistic flex flex-col flex-shrink-0 select-none p-6 justify-between h-[calc(100vh-24px)] sticky top-3">
+    <>
+      {/* Mobile Overlay Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/45 backdrop-blur-xs z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside
+        className={clsx(
+          "w-[304px] bg-white rounded-2xl shadow-realistic flex flex-col flex-shrink-0 select-none p-6 justify-between h-[calc(100vh-24px)] transition-transform duration-300 z-50",
+          "lg:sticky lg:top-3 lg:translate-x-0",
+          "max-lg:fixed max-lg:top-3 max-lg:left-3 max-lg:shadow-2xl",
+          sidebarOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-[340px]"
+        )}
+      >
       <div>
         {/* Logo */}
         <div className="flex items-center gap-3 mb-6">
@@ -89,5 +104,6 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

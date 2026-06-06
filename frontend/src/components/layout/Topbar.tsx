@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useAppStore } from '@/store/useAppStore';
 import clsx from 'clsx';
 
 interface TopbarProps {
@@ -11,6 +12,7 @@ interface TopbarProps {
 
 export function Topbar({ title, showBack = false, onBack }: TopbarProps) {
   const router = useRouter();
+  const { setSidebarOpen } = useAppStore();
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -19,7 +21,13 @@ export function Topbar({ title, showBack = false, onBack }: TopbarProps) {
 
   return (
     <header className="bg-white/75 backdrop-blur-md rounded-2xl shadow-realistic h-14 flex items-center justify-between px-6 flex-shrink-0 select-none border border-white/40">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="text-brand font-bold hover:bg-surface-2 w-8 h-8 rounded-lg flex items-center justify-center transition-colors text-lg lg:hidden"
+        >
+          ☰
+        </button>
         {showBack && (
           <button
             onClick={handleBack}
