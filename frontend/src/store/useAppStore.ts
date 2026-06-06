@@ -10,6 +10,13 @@ export interface GenerationState {
   error: string | null;
 }
 
+export interface SchoolSettings {
+  teacherName: string;
+  schoolName: string;
+  schoolBranch: string;
+  defaultGrade: string;
+}
+
 interface AppState {
   // Assignments
   assignments: Assignment[];
@@ -33,7 +40,12 @@ interface AppState {
   // UI state
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+
+  // Settings
+  settings: SchoolSettings;
+  updateSettings: (updates: Partial<SchoolSettings>) => void;
 }
+
 
 const initialGeneration: GenerationState = {
   assignmentId: null,
@@ -86,13 +98,25 @@ export const useAppStore = create<AppState>()(
         // UI
         sidebarOpen: true,
         setSidebarOpen: (open) => set({ sidebarOpen: open }),
+
+        // Settings
+        settings: {
+          teacherName: 'Dr. Sarah Jenkins',
+          schoolName: 'Delhi Public School',
+          schoolBranch: 'Bokaro Steel City',
+          defaultGrade: '10',
+        },
+        updateSettings: (updates) =>
+          set((s) => ({ settings: { ...s.settings, ...updates } })),
       }),
       {
         name: 'vedaai-store',
         partialize: (state) => ({
           assignments: state.assignments,
+          settings: state.settings,
         }),
       }
     )
   )
 );
+

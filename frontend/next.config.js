@@ -4,15 +4,7 @@ const nextConfig = {
   experimental: {
     typedRoutes: false,
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/assignments',
-        permanent: false,
-      },
-    ];
-  },
+
 };
 
 module.exports = nextConfig;

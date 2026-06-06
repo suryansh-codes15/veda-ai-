@@ -15,7 +15,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { assignments } = useAppStore();
+  const { assignments, settings } = useAppStore();
 
   const isActive = (href: string) => {
     if (href === '/assignments') return pathname.startsWith('/assignments') || pathname === '/';
@@ -83,8 +83,8 @@ export function Sidebar() {
             🟢
           </div>
           <div className="min-w-0">
-            <div className="text-[13px] font-bold leading-tight text-brand truncate">Delhi Public School</div>
-            <div className="text-[11px] text-[#9b9590] truncate">Bokaro Steel City</div>
+            <div className="text-[13px] font-bold leading-tight text-brand truncate">{settings?.schoolName || 'Delhi Public School'}</div>
+            <div className="text-[11px] text-[#9b9590] truncate">{settings?.schoolBranch || 'Bokaro Steel City'}</div>
           </div>
         </div>
       </div>
