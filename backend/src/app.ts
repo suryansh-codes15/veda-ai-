@@ -18,7 +18,19 @@ const httpServer = createServer(app);
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const isAllowed =
+        origin.startsWith('http://localhost:') ||
+        origin.endsWith('.vercel.app') ||
+        origin === process.env.FRONTEND_URL;
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
