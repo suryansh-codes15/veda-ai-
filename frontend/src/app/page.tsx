@@ -33,12 +33,12 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/create">
-                <Button variant="primary" className="rounded-full bg-white text-brand hover:bg-neutral-100 border-none font-bold">
+                <Button variant="ghost" className="rounded-full bg-white text-[#1a1a1a] hover:bg-neutral-100 font-bold px-6 py-2.5">
                   ✦ Create Assessment
                 </Button>
               </Link>
               <Link href="/toolkit">
-                <Button variant="secondary" className="rounded-full border-white/20 text-white hover:bg-white/10">
+                <Button variant="ghost" className="rounded-full border border-white/20 text-white hover:bg-white/10 px-6 py-2.5">
                   AI Teacher's Chat
                 </Button>
               </Link>
