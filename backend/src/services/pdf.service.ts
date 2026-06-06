@@ -1,0 +1,190 @@
+import PDFDocument from 'pdfkit';
+import type { GeneratedPaper } from '../../../shared/types';
+import type { Response } from 'express';
+
+const COLORS = {
+  black: '#1a1a1a',
+  gray: '#6b6660',
+  lightGray: '#9b9590',
+  border: '#e8e5df',
+  easy: '#2d7a4f',
+  medium: '#b85c00',
+  hard: '#b02020',
+  easyBg: '#e8f5ee',
+  accent: '#e85d26',
+};
+
+export function streamPaperAsPDF(paper: GeneratedPaper, res: Response): void {
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: { top: 50, bottom: 50, left: 60, right: 60 },
+    info: {
+      Title: `${paper.subject} Question Paper — ${paper.grade}`,
+      Author: 'VedaAI Assessment Creator',
+    },
+  });
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${paper.subject}_${paper.grade}_paper.pdf"`
+  );
+  doc.pipe(res);
+
+  const pageWidth = doc.page.width - 120; // margins
+
+  // Header
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(16)
+    .fillColor(COLORS.black)
+    .text(paper.schoolName, { align: 'center' });
+
+  doc
+    .font('Helvetica')
+    .fontSize(12)
+    .fillColor(COLORS.gray)
+    .text(`Subject: ${paper.subject}  |  Class: ${paper.grade}`, { align: 'center' });
+
+  doc.moveDown(0.3);
+  doc.moveTo(60, doc.y).lineTo(60 + pageWidth, doc.y).strokeColor(COLORS.black).lineWidth(1.5).stroke();
+  doc.moveDown(0.5);
+
+  // Meta row
+  doc
+    .font('Helvetica')
+    .fontSize(10)
+    .fillColor(COLORS.gray)
+    .text(`Time Allowed: ${paper.timeAllowed}`, 60, doc.y, { continued: true })
+    .text(`Maximum Marks: ${paper.maxMarks}`, { align: 'right' });
+
+  doc.moveDown(0.3);
+  doc
+    .font('Helvetica-Oblique')
+    .fontSize(9)
+    .fillColor(COLORS.gray)
+    .text('All questions are compulsory unless stated otherwise.', { align: 'center' });
+
+  doc.moveDown(0.5);
+  doc.moveTo(60, doc.y).lineTo(60 + pageWidth, doc.y).strokeColor(COLORS.border).lineWidth(0.5).stroke();
+  doc.moveDown(0.5);
+
+  // Student fields
+  const fieldY = doc.y;
+  doc.font('Helvetica').fontSize(10).fillColor(COLORS.black);
+  doc.text('Name: _______________________________', 60, fieldY);
+  doc.text('Roll No: _______________', 280, fieldY);
+  doc.text('Section: ________', 430, fieldY);
+  doc.moveDown(1.2);
+
+  // Sections
+  let questionNumber = 1;
+
+  for (const section of paper.sections) {
+    // Section title
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(12)
+      .fillColor(COLORS.black)
+      .text(section.title);
+
+    doc.moveTo(60, doc.y).lineTo(60 + pageWidth, doc.y).strokeColor(COLORS.black).lineWidth(1).stroke();
+    doc.moveDown(0.2);
+
+    doc
+      .font('Helvetica-Oblique')
+      .fontSize(9)
+      .fillColor(COLORS.gray)
+      .text(section.instruction);
+
+    doc.moveDown(0.6);
+
+    for (const q of section.questions) {
+      // Check for page overflow
+      if (doc.y > doc.page.height - 120) {
+        doc.addPage();
+      }
+
+      // Question text
+      doc
+        .font('Helvetica')
+        .fontSize(10)
+        .fillColor(COLORS.black)
+        .text(`${questionNumber}. ${q.question}`, { width: pageWidth - 80 });
+
+      if (q.options && q.options.length > 0) {
+        const letters = ['a', 'b', 'c', 'd'];
+        q.options.forEach((opt, idx) => {
+          doc
+            .font('Helvetica')
+            .fontSize(9)
+            .fillColor(COLORS.gray)
+            .text(`    (${letters[idx]}) ${opt}`, { width: pageWidth - 100 });
+        });
+      }
+
+      // Difficulty badge + marks
+      const diffColor =
+        q.difficulty === 'Easy' ? COLORS.easy : q.difficulty === 'Hard' ? COLORS.hard : COLORS.medium;
+
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(8)
+        .fillColor(diffColor)
+        .text(`[${q.difficulty}]  ${q.marks} mark${q.marks > 1 ? 's' : ''}`, { align: 'right' });
+
+      doc.moveDown(0.5);
+      questionNumber++;
+    }
+
+    doc.moveDown(0.5);
+  }
+
+  // Answer Key
+  if (doc.y > doc.page.height - 150) doc.addPage();
+
+  doc.moveDown(0.5);
+  doc.moveTo(60, doc.y).lineTo(60 + pageWidth, doc.y).strokeColor(COLORS.border).lineWidth(1).stroke();
+  doc.moveDown(0.5);
+
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(12)
+    .fillColor(COLORS.black)
+    .text('Answer Key');
+
+  doc.moveDown(0.4);
+
+  let answerNum = 1;
+  for (const section of paper.sections) {
+    for (const q of section.questions) {
+      if (doc.y > doc.page.height - 80) doc.addPage();
+
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(9)
+        .fillColor(COLORS.gray)
+        .text(`${answerNum}.`, 60, doc.y, { continued: true, width: 20 })
+        .font('Helvetica')
+        .fillColor(COLORS.gray)
+        .text(` ${q.answer}`, { width: pageWidth - 20 });
+
+      doc.moveDown(0.3);
+      answerNum++;
+    }
+  }
+
+  // Footer
+  const range = doc.bufferedPageRange();
+  for (let i = range.start; i < range.start + range.count; i++) {
+    doc.switchToPage(i);
+    doc
+      .font('Helvetica')
+      .fontSize(8)
+      .fillColor(COLORS.lightGray)
+      .text('Generated by VedaAI', 60, doc.page.height - 35, { continued: true })
+      .text(`Page ${i + 1} of ${range.count}`, { align: 'right' });
+  }
+
+  doc.end();
+}
