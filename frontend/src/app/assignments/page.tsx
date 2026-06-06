@@ -7,7 +7,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { Button, Alert } from '@/components/ui';
 import { useAssignments } from '@/hooks/useAssignments';
 import { useAppStore } from '@/store/useAppStore';
-import type { Assignment } from '../../../shared/types';
+import type { Assignment } from '@shared/types';
 
 function EmptyState() {
   return (

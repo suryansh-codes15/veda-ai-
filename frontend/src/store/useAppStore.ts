@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import type { Assignment, GeneratedPaper } from '../../shared/types';
+import type { Assignment, GeneratedPaper } from '@shared/types';
 
 export interface GenerationState {
   assignmentId: string | null;
@@ -26,7 +26,7 @@ interface AppState {
   // Generation progress
   generation: GenerationState;
   setGenerationProgress: (progress: number, stage: string) => void;
-  setGenerationStatus: (status: GenerationState['status'], error?: string) => void;
+  setGenerationStatus: (status: GenerationState['status'], error?: string | null) => void;
   startGeneration: (assignmentId: string) => void;
   resetGeneration: () => void;
 

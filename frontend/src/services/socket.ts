@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import type { JobProgressEvent, JobCompleteEvent, JobFailedEvent } from '../../shared/types';
+import type { JobProgressEvent, JobCompleteEvent, JobFailedEvent } from '@shared/types';
 
 let socket: Socket | null = null;
 

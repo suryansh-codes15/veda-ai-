@@ -1,5 +1,5 @@
 import { DifficultyBadge } from '@/components/ui';
-import type { GeneratedPaper } from '../../../../shared/types';
+import type { GeneratedPaper } from '@shared/types';
 
 interface PaperRendererProps {
   paper: GeneratedPaper;

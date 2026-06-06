@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { Button, Input, Textarea, Alert, Card } from '@/components/ui';
 import { useGeneration } from '@/hooks/useGeneration';
-import type { CreateAssignmentDTO, QuestionTypeConfig, QuestionType } from '../../../shared/types';
+import type { CreateAssignmentDTO, QuestionTypeConfig, QuestionType } from '@shared/types';
 import clsx from 'clsx';
 
 const QUESTION_TYPES: QuestionType[] = [

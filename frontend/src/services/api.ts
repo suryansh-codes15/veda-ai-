@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Assignment, CreateAssignmentDTO, ApiResponse } from '../../shared/types';
+import type { Assignment, CreateAssignmentDTO, ApiResponse } from '@shared/types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',

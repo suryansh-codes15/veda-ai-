@@ -8,7 +8,7 @@ import { PaperRenderer } from '@/components/paper/PaperRenderer';
 import { useAppStore } from '@/store/useAppStore';
 import { useGeneration } from '@/hooks/useGeneration';
 import { assignmentService } from '@/services/api';
-import type { GeneratedPaper } from '../../../../shared/types';
+import type { GeneratedPaper } from '@shared/types';
 
 export default function OutputPage() {
   const router = useRouter();

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { assignmentService } from '@/services/api';
 import { subscribeToAssignment } from '@/services/socket';
-import type { CreateAssignmentDTO } from '../../shared/types';
+import type { CreateAssignmentDTO } from '@shared/types';
 
 export function useGeneration() {
   const router = useRouter();
